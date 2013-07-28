@@ -10,6 +10,6 @@ WriteMakefile(
     LIBS         => ['-lstdc++'],
     CCFLAGS      => $CCFLAGS,
     clean        => {
-        FILES => 'BinaryBuffer.xs'
+        FILES => 'api.xsi'
     },
 );
