@@ -1,0 +1,2 @@
+TYPEMAP
+BinaryBuffer *     O_OBJECT
