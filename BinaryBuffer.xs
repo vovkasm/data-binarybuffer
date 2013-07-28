@@ -31,6 +31,14 @@ public:
         data.erase(data.begin(), data.begin() + len);
         return sv;
     }
+    BinaryBuffer* read_buffer(int len) {
+        if (data.size() < len)
+            len = data.size();
+        BinaryBuffer* new_buf = new BinaryBuffer();
+        new_buf->data.insert(new_buf->data.end(), data.begin(), data.begin() + len);
+        data.erase(data.begin(), data.begin() + len);
+        return new_buf;
+    }
     SV* read_uint8() {
         uint8_t val = data[0];
         data.pop_front();
@@ -161,6 +169,14 @@ BinaryBuffer::size();
 
 SV*
 BinaryBuffer::read(int len);
+
+BinaryBuffer*
+BinaryBuffer::read_buffer(int len)
+CODE:
+    RETVAL = THIS->read_buffer(len);
+    const char* CLASS = "Data::BinaryBuffer";
+OUTPUT:
+    RETVAL
 
 SV*
 BinaryBuffer::read_uint8();

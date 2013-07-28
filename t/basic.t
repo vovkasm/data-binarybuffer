@@ -120,4 +120,16 @@ use Data::BinaryBuffer;
     is $s->size, 0, "read_int32le read 4 bytes";
 }
 
+{ # read_buffer
+    my $s = Data::BinaryBuffer->new;
+
+    $s->add("abcdefg012345");
+    is $s->size, 13, "initial string 13 bytes long";
+    my $s1 = $s->read_buffer(7);
+    is $s->size, 6, "remains 6 bytes in original buffer";
+    is $s1->size, 7, "new buffer size is 7";
+    is $s1->read(7), "abcdefg", "new buffer contains right data";
+    is $s->read(6), "012345", "original buffer contains right data";
+}
+
 done_testing;
