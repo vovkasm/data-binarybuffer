@@ -1,9 +1,5 @@
-extern "C" {
-#include "EXTERN.h"
-#include "perl.h"
-}
-
-#include "XSUB.h"
+#ifndef __BINARY_BUFFER_H__
+#define __BINARY_BUFFER_H__
 
 #include <algorithm>
 #include <deque>
@@ -156,88 +152,5 @@ private:
     std::deque<uint8_t> data;
 };
 
-MODULE = Data::BinaryBuffer       PACKAGE = Data::BinaryBuffer
 
-BinaryBuffer*
-BinaryBuffer::new();
-
-void
-BinaryBuffer::DESTROY();
-
-int
-BinaryBuffer::size();
-
-SV*
-BinaryBuffer::read(int len);
-
-BinaryBuffer*
-BinaryBuffer::read_buffer(int len)
-CODE:
-    RETVAL = THIS->read_buffer(len);
-    const char* CLASS = "Data::BinaryBuffer";
-OUTPUT:
-    RETVAL
-
-SV*
-BinaryBuffer::read_uint8();
-
-SV*
-BinaryBuffer::read_int8();
-
-SV*
-BinaryBuffer::read_uint16be();
-
-SV*
-BinaryBuffer::read_uint16le();
-
-SV*
-BinaryBuffer::read_int16be();
-
-SV*
-BinaryBuffer::read_int16le();
-
-SV*
-BinaryBuffer::read_uint32be();
-
-SV*
-BinaryBuffer::read_uint32le();
-
-SV*
-BinaryBuffer::read_int32be();
-
-SV*
-BinaryBuffer::read_int32le();
-
-void
-BinaryBuffer::add(SV* sv);
-
-void
-BinaryBuffer::write_uint8(SV* sv);
-
-void
-BinaryBuffer::write_int8(SV* sv);
-
-void
-BinaryBuffer::write_uint16be(SV* sv);
-
-void
-BinaryBuffer::write_uint16le(SV* sv);
-
-void
-BinaryBuffer::write_int16be(SV* sv);
-
-void
-BinaryBuffer::write_int16le(SV* sv);
-
-void
-BinaryBuffer::write_uint32be(SV* sv);
-
-void
-BinaryBuffer::write_uint32le(SV* sv);
-
-void
-BinaryBuffer::write_int32be(SV* sv);
-
-void
-BinaryBuffer::write_int32le(SV* sv);
-
+#endif /* __BINARY_BUFFER_H__ */
