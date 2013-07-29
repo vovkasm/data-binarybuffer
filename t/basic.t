@@ -16,6 +16,9 @@ use Data::BinaryBuffer;
 
     is $s->read(6), "567890";
     is $s->size, 0;
+
+    $s->add("1234");
+    is $s->read(6), "1234";
 }
 
 { # uint8
