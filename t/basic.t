@@ -5,32 +5,46 @@ use Data::BinaryBuffer;
 
 {
     my $s = Data::BinaryBuffer->new;
-    is $s->size, 0;
+    is $s->size, 0, "initial size is 0";
 
     $s->add("12345");
-    is $s->size, 5;
+    is $s->size, 5, "right size after write 5 bytes";
 
-    is $s->read(4), "1234";
+    is $s->read(4), "1234", "read 4 bytes";
     $s->add("67890");
-    is $s->size, 6;
+    is $s->size, 6, "add another 5 bytes, now size is 6";
 
-    is $s->read(6), "567890";
-    is $s->size, 0;
+    is $s->read(6), "567890", "read 6 bytes";
+    is $s->size, 0, "now size is 0";
 
     $s->add("1234");
-    is $s->read(6), "1234";
+    is $s->read(6), "1234", "write 4 bytes, read 6, we should got 4";
+}
+
+{ # write/read big data
+    my $s = Data::BinaryBuffer->new;
+
+    $s->add("abcd" x 2048);
+    is $s->size, 8192, "write 8Kb of data";
+
+    is $s->read(15), "abcdabcdabcdabc", "now read 15 bytes back";
+    is $s->size, 8177, "now size should be 8177 bytes";
+    is $s->read(4096), "dabc" x 1024, "read back 4Kb";
+    is $s->size, 4081, "now size should be 4081";
 }
 
 { # uint8
     my $s = Data::BinaryBuffer->new;
     $s->add("0");
-    is $s->read_uint8, ord("0");
+    is $s->read_uint8, ord("0"), "we can read one byte as uint";
+    is $s->size, 0, "size now 0";
 
     $s->write_uint8(5);
-    is $s->read_uint8, 5;
+    is $s->size, 1, "write uint8, size should be 1";
+    is $s->read_uint8, 5, "write and read uint8";
 
     $s->write_uint8(-1);
-    is $s->read_uint8, 255;
+    is $s->read_uint8, 255, "write -1 and read 255 as uint";
 }
 
 { # int8
@@ -132,6 +146,18 @@ use Data::BinaryBuffer;
     is $s->size, 6, "remains 6 bytes in original buffer";
     is $s1->size, 7, "new buffer size is 7";
     is $s1->read(7), "abcdefg", "new buffer contains right data";
+    is $s->read(6), "012345", "original buffer contains right data";
+}
+
+{ # read big buffer
+    my $s = Data::BinaryBuffer->new;
+
+    $s->add("01234567" x 1024); # 8Kb
+    is $s->size, 8192, "initial string 8Kb long";
+    my $s1 = $s->read_buffer(8000);
+    is $s->size, 192, "remains 192 bytes in original buffer";
+    is $s1->size, 8000, "new buffer size is 8000";
+    is $s1->read(4096), "01234567" x 512, "new buffer contains right data";
     is $s->read(6), "012345", "original buffer contains right data";
 }
 

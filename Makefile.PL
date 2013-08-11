@@ -21,26 +21,26 @@ sub gen_xs {
 
     my @APIDEF = (
         [ 'int',      "size" ],
-        [ 'uint8_t',  "read_uint8" ],
-        [ 'uint16_t', "read_uint16be" ],
-        [ 'uint16_t', "read_uint16le" ],
-        [ 'uint32_t', "read_uint32be" ],
-        [ 'uint32_t', "read_uint32le" ],
-        [ 'int8_t',   "read_int8" ],
-        [ 'int16_t',  "read_int16be" ],
-        [ 'int16_t',  "read_int16le" ],
-        [ 'int32_t',  "read_int32be" ],
-        [ 'int32_t',  "read_int32le" ],
-        [ 'void', "write_uint8",    'uint8_t' ],
-        [ 'void', "write_uint16be", 'uint16_t' ],
-        [ 'void', "write_uint16le", 'uint16_t' ],
-        [ 'void', "write_uint32be", 'uint32_t' ],
-        [ 'void', "write_uint32le", 'uint32_t' ],
-        [ 'void', "write_int8",     'int8_t' ],
-        [ 'void', "write_int16be",  'int16_t' ],
-        [ 'void', "write_int16le",  'int16_t' ],
-        [ 'void', "write_int32be",  'int32_t' ],
-        [ 'void', "write_int32le",  'int32_t' ]
+        [ 'uint8_t',  "read_uint8 -> read_integral<uint8_t>" ],
+        [ 'uint16_t', "read_uint16be -> read_integral_be<uint16_t>" ],
+        [ 'uint16_t', "read_uint16le -> read_integral_le<uint16_t>" ],
+        [ 'uint32_t', "read_uint32be -> read_integral_be<uint32_t>" ],
+        [ 'uint32_t', "read_uint32le -> read_integral_le<uint32_t>" ],
+        [ 'int8_t',   "read_int8 -> read_integral<int8_t>" ],
+        [ 'int16_t',  "read_int16be -> read_integral_be<int16_t>" ],
+        [ 'int16_t',  "read_int16le -> read_integral_le<int16_t>" ],
+        [ 'uint32_t', "read_int32be -> read_integral_be<int32_t>" ],
+        [ 'uint32_t', "read_int32le -> read_integral_le<int32_t>" ],
+        [ 'void', "write_uint8 -> write_integral",    'uint8_t' ],
+        [ 'void', "write_uint16be -> write_integral_be", 'uint16_t' ],
+        [ 'void', "write_uint16le -> write_integral_le", 'uint16_t' ],
+        [ 'void', "write_uint32be -> write_integral_be", 'uint32_t' ],
+        [ 'void', "write_uint32le -> write_integral_le", 'uint32_t' ],
+        [ 'void', "write_int8 -> write_integral",     'int8_t' ],
+        [ 'void', "write_int16be -> write_integral_be",  'int16_t' ],
+        [ 'void', "write_int16le -> write_integral_le",  'int16_t' ],
+        [ 'void', "write_int32be -> write_integral_be",  'int32_t' ],
+        [ 'void', "write_int32le -> write_integral_le",  'int32_t' ]
     );
 
     open my $fh, '>', $xs_file or die "Can't open file $xs_file for write: $!";
@@ -94,6 +94,14 @@ ENDXS
 
     foreach my $def (@APIDEF) {
         my ( $ret_type, $meth, @args ) = @$def;
+        my $c_meth;
+        if ($meth =~ /(\S+)\s*->\s*(\S+)/) {
+            $meth = $1;
+            $c_meth = $2;
+        }
+        else {
+            $c_meth = $meth;
+        }
         unshift @args, 'BinaryBuffer* THIS' unless @args && $args[0] =~ /THIS/;
         my ( @arg_names, @xs_args );
         for ( my $i = 0 ; $i < @args ; $i++ ) {
@@ -115,14 +123,14 @@ ENDXS
         if ( $ret_type eq 'void' ) {
             $code_section = <<ENDXS;
 CODE:
-    THIS->$meth($c_args_l);
+    THIS->$c_meth($c_args_l);
 ENDXS
             $output_section = "";
         }
         else {
             $code_section = <<ENDXS;
 CODE:
-    RETVAL = THIS->$meth($c_args_l);
+    RETVAL = THIS->$c_meth($c_args_l);
 ENDXS
             $output_section = <<ENDXS;
 OUTPUT:
