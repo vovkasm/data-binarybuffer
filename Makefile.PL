@@ -1,7 +1,23 @@
 use ExtUtils::MakeMaker;
 use Config;
+use Getopt::Long qw(:config pass_through);
+use Text::ParseWords;
 
-my $CCFLAGS = join( ' ', $Config{ccflags}, '-x c++' );
+my $coverage;
+
+GetOptions(
+    'coverage!' => \$coverage,
+);
+
+my @CCFLAGS = shellwords($Config{ccflags});
+my @LDDLFLAGS = shellwords($Config{lddlflags});
+
+push @CCFLAGS, qw/-x c++/;
+
+if ($coverage) {
+    push @CCFLAGS, qw/--coverage/;
+    push @LDDLFLAGS, qw/--coverage/;
+}
 
 gen_xs();
 
@@ -10,7 +26,8 @@ WriteMakefile(
     VERSION_FROM => "BinaryBuffer.pm",
     TYPEMAPS     => ['perlobject.map'],
     LIBS         => ['-lstdc++'],
-    CCFLAGS      => $CCFLAGS,
+    CCFLAGS      => join(' ',@CCFLAGS),
+    LDDLFLAGS    => join(' ',@LDDLFLAGS),
     clean        => {
         FILES => 'BinaryBuffer.xs'
     },
