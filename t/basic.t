@@ -19,6 +19,9 @@ use Data::BinaryBuffer;
 
     $s->add("1234");
     is $s->read(6), "1234", "write 4 bytes, read 6, we should got 4";
+
+    $s = Data::BinaryBuffer->new;
+    is $s->read(10), '', "read from empty buffer always return empty string";
 }
 
 { # write/read big data
@@ -147,6 +150,10 @@ use Data::BinaryBuffer;
     is $s1->size, 7, "new buffer size is 7";
     is $s1->read(7), "abcdefg", "new buffer contains right data";
     is $s->read(6), "012345", "original buffer contains right data";
+
+    is $s->size, 0, "try read buffer from empty one";
+    my $s2 = $s->read_buffer(10);
+    is $s2->size, 0, "we got buffer with size = 0";
 }
 
 { # read big buffer
