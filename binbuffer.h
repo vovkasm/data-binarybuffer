@@ -130,12 +130,14 @@ public:
             int chunk_data_size = _head->data_size();
             int to_read = len > chunk_data_size ? chunk_data_size : len;
 
-            memmove(buf, &_head->data[_head->start_off], to_read);
-            buf += to_read;
-            _head->start_off += to_read;
-            len -= to_read;
-            _size -= to_read;
-            actual_read_size += to_read;
+            if (to_read > 0) {
+                memmove(buf, &_head->data[_head->start_off], to_read);
+                buf += to_read;
+                _head->start_off += to_read;
+                len -= to_read;
+                _size -= to_read;
+                actual_read_size += to_read;
+            }
 
             remove_empty_chunk();
         }
