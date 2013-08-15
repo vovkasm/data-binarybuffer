@@ -78,7 +78,7 @@ public:
 
     int size() const { return _size; }
 
-    void add(const char* src, int len) {
+    void write(const char* src, int len) {
         while (len > 0) {
             int free_to_write = ensure_can_write_to_chunk(1);
             int to_write = len > free_to_write ? free_to_write : len;

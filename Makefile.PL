@@ -101,11 +101,11 @@ OUTPUT:
     RETVAL
 
 void
-add(BinaryBuffer* THIS, SV* sv)
+write(BinaryBuffer* THIS, SV* sv)
 CODE:
     STRLEN len;
     const char* src = SvPVbyte(sv, len);
-    THIS->add(src, len);
+    THIS->write(src, len);
 
 ENDXS
 
