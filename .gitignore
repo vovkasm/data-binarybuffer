@@ -1,0 +1,6 @@
+.*
+!.gitignore
+*META*
+Makefile*
+!Makefile.PL
+*blib
