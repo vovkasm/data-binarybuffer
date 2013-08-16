@@ -33,7 +33,7 @@ __END__
 
 =head1 DESCRIPTION
 
-NOTE: This module is in very alpha state. API may change without any notice until version 0.5.
+NOTE: This module is in very alpha state. API may change without any notice until version 0.1.
 
 Perl is good for strings, bug not very nice to binary data. This class exactly for that.
 
