@@ -7,3 +7,4 @@ Makefile*
 BinaryBuffer*
 !BinaryBuffer.pm
 !BinaryBuffer.xs
+Data-BinaryBuffer-*
