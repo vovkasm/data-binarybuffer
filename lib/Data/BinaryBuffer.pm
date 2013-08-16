@@ -2,10 +2,10 @@ package Data::BinaryBuffer;
 use strict;
 use warnings;
 
-our $VERSION = '0.01_1';
+# ABSTRACT: The module to work with binary data effectively
 
 require XSLoader;
-XSLoader::load('Data::BinaryBuffer', $VERSION);
+XSLoader::load('Data::BinaryBuffer', $Data::BinaryBuffer::VERSION ? $Data::BinaryBuffer::VERSION : ());
 
 1;
 
@@ -14,10 +14,6 @@ __END__
 =pod
 
 =encoding utf-8
-
-=head1 NAME
-
-Data::BinaryBuffer - the module to work with binary data effectively
 
 =head1 SYNOPSIS
 
@@ -110,50 +106,12 @@ This method is very fast for big data.
 
 =head1 SEE ALSO
 
-=over 4
+=for :list
+* pack/unpack functions in perldoc
+* L<File::Binary>
+* L<Parse::Binary>
+* L<Convert::Binary::C>
 
-=item *
-
-pack/unpack functions in perldoc
-
-=item *
-
-L<File::Binary>
-
-=item *
-
-L<Parse::Binary>
-
-=item *
-
-L<Convert::Binary::C>
-
-=back
-
-=head1 SUPPORT
-
-=head2 Bugs / Feature Requests
-
-Please report any bugs or feature requests through the isuue tracker
-at L<https://github.com/vovkasm/p5-Data-BinaryBuffer/issues>.
-
-=head2 Source Code
-
-L<https://github/vovkasm/p5-Data-BinaryBuffer>
-
-  git clone https://github.com/vovkasm/p5-Data-BinaryBuffer.git
-
-=head1 AUTHOR
-
-Vladimir Timofeev <vovkasm@gmail.com>
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2013 by Vladimir Timofeev
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
- 
 =cut
 
 
