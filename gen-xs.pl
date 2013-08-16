@@ -1,4 +1,6 @@
 #!perl
+use strict;
+use warnings;
 
 my $xs_file = 'BinaryBuffer.xs';
 
