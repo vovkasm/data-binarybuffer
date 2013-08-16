@@ -2,7 +2,7 @@ package Data::BinaryBuffer;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.01_1';
 
 require XSLoader;
 XSLoader::load('Data::BinaryBuffer', $VERSION);
