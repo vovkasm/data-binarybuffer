@@ -7,6 +7,8 @@
 
 #if defined(__GLIBC__)
     #include <endian.h>
+#elif defined(__FreeBSD__)
+    #include <sys/endian.h>
 #else
     #error "Can't find hto* and *toh functions on that system";
 #endif

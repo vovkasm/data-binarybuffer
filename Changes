@@ -2,6 +2,7 @@
 
 0.002     2013-08-16 23:49:35 Europe/Moscow
   * Fix source repository information in docs
+  * Make it work on FreeBSD
 
 0.001     2013-08-16 23:40:12 Europe/Moscow
   * Initial release to CPAN
