@@ -180,4 +180,12 @@ use Data::BinaryBuffer;
     is $s1->read(2000), "b" x 2000, "chunk 2 right";
 }
 
+{ # bug with long writes
+    my $s = Data::BinaryBuffer->new;
+    my $sample = ("A" x 2000).("B" x 2000).("C" x 2000);
+    $s->write($sample);
+    my $data = $s->read(6000);
+    is $data, $sample;
+}
+
 done_testing;

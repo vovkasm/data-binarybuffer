@@ -86,6 +86,7 @@ public:
             _tail->end_off += to_write;
             len -= to_write;
             _size += to_write;
+            src += to_write;
         }
     }
     template<typename T> inline T host_to_be(T val);
