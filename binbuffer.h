@@ -2,8 +2,6 @@
 #define __BINARY_BUFFER_H__
 
 #include <cstring>
-#include <algorithm>
-#include <deque>
 
 #if defined(__GLIBC__)
     #include <endian.h>

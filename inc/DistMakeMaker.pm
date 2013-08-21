@@ -17,16 +17,19 @@ sub _configure_tmpl {
     my $tmpl = <<'TEMPLATE';
 use Config ();
 use Text::ParseWords 'shellwords';
+use inc::CConf;
 
 $WriteMakefileArgs{CONFIGURE} = sub {
     my %args;
 
-    my @CCFLAGS = shellwords($Config::Config{ccflags});
-    push @CCFLAGS, qw/-x c++/;
-    $args{CCFLAGS} = join(' ', @CCFLAGS);
+    my $c = inc::CConf->new;
+
+    $c->need_cplusplus;
+    $c->need_stl;
+
+    %args = $c->makemaker_args;
 
     $args{TYPEMAPS} = ['perlobject.map'];
-    $args{LIBS} = ['-lstdc++'];
 
     return \%args;
 };
