@@ -22,10 +22,35 @@ use inc::CConf;
 $WriteMakefileArgs{CONFIGURE} = sub {
     my %args;
 
-    my $c = inc::CConf->new;
+    my $c = inc::CConf->new(config_file=>'binarybuffer-config.h');
 
     $c->need_cplusplus;
     $c->need_stl;
+
+    my $test_sys_endian_h = <<"ENDCODE";
+#include <sys/endian.h>
+int main() { return 0; }
+ENDCODE
+    my $test_endian_h = <<"ENDCODE";
+#include <endian.h>
+int main() { return 0; }
+ENDCODE
+
+    $c->try_build(
+        on_error => sub { die "Can't find hto* funtions on this platform" },
+        try => [
+            {
+                code => $test_sys_endian_h,
+                defs => { HAS_SYS_ENDIAN_H => 1 },
+            },
+            {
+                code => $test_endian_h,
+                defs => { HAS_ENDIAN_H => 1 },
+            }
+        ]
+    );
+
+    $c->generate_config_file;
 
     %args = $c->makemaker_args;
 

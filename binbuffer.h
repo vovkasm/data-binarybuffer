@@ -3,12 +3,13 @@
 
 #include <cstring>
 
-#if defined(__GLIBC__)
+#include "binarybuffer-config.h"
+#if defined(HAS_ENDIAN_H)
     #include <endian.h>
-#elif defined(__FreeBSD__)
+#elif defined(HAS_SYS_ENDIAN_H)
     #include <sys/endian.h>
 #else
-    #error "Can't find hto* and *toh functions on that system";
+    #error Can't find hto* and *toh functions on that system
 #endif
 
 class BinaryBuffer {
