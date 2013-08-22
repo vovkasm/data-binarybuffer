@@ -1,5 +1,7 @@
 {{$NEXT}}
   * Fix CCFLAGS leak from build environment
+  * Try support more platforms (Not Win32 while)
+  * Improve build system
 
 0.003     2013-08-17 05:28:14 Europe/Moscow
   * Make it work on FreeBSD
