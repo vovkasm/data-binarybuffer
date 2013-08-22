@@ -12,6 +12,22 @@
     #error Can't find hto* and *toh functions on that system
 #endif
 
+#define bb_htobe16(arg) htobe16(arg);
+#define bb_htole16(arg) htole16(arg);
+#define bb_htobe32(arg) htobe32(arg);
+#define bb_htole32(arg) htole32(arg);
+#if defined(HAS_ORIGINAL_ENDIAN_MACROS)
+#   define bb_be16toh(arg) betoh16(arg);
+#   define bb_le16toh(arg) letoh16(arg);
+#   define bb_be32toh(arg) betoh32(arg);
+#   define bb_le32toh(arg) letoh32(arg);
+#else
+#   define bb_be16toh(arg) be16toh(arg);
+#   define bb_le16toh(arg) le16toh(arg);
+#   define bb_be32toh(arg) be32toh(arg);
+#   define bb_le32toh(arg) le32toh(arg);
+#endif
+
 class BinaryBuffer {
 private:
     struct chunk {
@@ -212,33 +228,33 @@ public:
 /* host to big endian specialization */
 template<> inline uint8_t BinaryBuffer::host_to_be(uint8_t val) { return val; }
 template<> inline int8_t BinaryBuffer::host_to_be(int8_t val) { return val; }
-template<> inline uint16_t BinaryBuffer::host_to_be(uint16_t val) { return htobe16(val); }
-template<> inline int16_t BinaryBuffer::host_to_be(int16_t val) { return htobe16(val); }
-template<> inline uint32_t BinaryBuffer::host_to_be(uint32_t val) { return htobe32(val); }
-template<> inline int32_t BinaryBuffer::host_to_be(int32_t val) { return htobe32(val); }
+template<> inline uint16_t BinaryBuffer::host_to_be(uint16_t val) { return bb_htobe16(val); }
+template<> inline int16_t BinaryBuffer::host_to_be(int16_t val) { return bb_htobe16(val); }
+template<> inline uint32_t BinaryBuffer::host_to_be(uint32_t val) { return bb_htobe32(val); }
+template<> inline int32_t BinaryBuffer::host_to_be(int32_t val) { return bb_htobe32(val); }
 
 /* big endian to host specialization */
 template<> inline uint8_t BinaryBuffer::host_from_be(uint8_t val) { return val; }
 template<> inline int8_t BinaryBuffer::host_from_be(int8_t val) { return val; }
-template<> inline uint16_t BinaryBuffer::host_from_be(uint16_t val) { return be16toh(val); }
-template<> inline int16_t BinaryBuffer::host_from_be(int16_t val) { return be16toh(val); }
-template<> inline uint32_t BinaryBuffer::host_from_be(uint32_t val) { return be32toh(val); }
-template<> inline int32_t BinaryBuffer::host_from_be(int32_t val) { return be32toh(val); }
+template<> inline uint16_t BinaryBuffer::host_from_be(uint16_t val) { return bb_be16toh(val); }
+template<> inline int16_t BinaryBuffer::host_from_be(int16_t val) { return bb_be16toh(val); }
+template<> inline uint32_t BinaryBuffer::host_from_be(uint32_t val) { return bb_be32toh(val); }
+template<> inline int32_t BinaryBuffer::host_from_be(int32_t val) { return bb_be32toh(val); }
 
 /* host to little endian specialization */
 template<> inline uint8_t BinaryBuffer::host_to_le(uint8_t val) { return val; }
 template<> inline int8_t BinaryBuffer::host_to_le(int8_t val) { return val; }
-template<> inline uint16_t BinaryBuffer::host_to_le(uint16_t val) { return htole16(val); }
-template<> inline int16_t BinaryBuffer::host_to_le(int16_t val) { return htole16(val); }
-template<> inline uint32_t BinaryBuffer::host_to_le(uint32_t val) { return htole32(val); }
-template<> inline int32_t BinaryBuffer::host_to_le(int32_t val) { return htole32(val); }
+template<> inline uint16_t BinaryBuffer::host_to_le(uint16_t val) { return bb_htole16(val); }
+template<> inline int16_t BinaryBuffer::host_to_le(int16_t val) { return bb_htole16(val); }
+template<> inline uint32_t BinaryBuffer::host_to_le(uint32_t val) { return bb_htole32(val); }
+template<> inline int32_t BinaryBuffer::host_to_le(int32_t val) { return bb_htole32(val); }
 
 /* little endian to host specialization */
 template<> inline uint8_t BinaryBuffer::host_from_le(uint8_t val) { return val; }
 template<> inline int8_t BinaryBuffer::host_from_le(int8_t val) { return val; }
-template<> inline uint16_t BinaryBuffer::host_from_le(uint16_t val) { return le16toh(val); }
-template<> inline int16_t BinaryBuffer::host_from_le(int16_t val) { return le16toh(val); }
-template<> inline uint32_t BinaryBuffer::host_from_le(uint32_t val) { return le32toh(val); }
-template<> inline int32_t BinaryBuffer::host_from_le(int32_t val) { return le32toh(val); }
+template<> inline uint16_t BinaryBuffer::host_from_le(uint16_t val) { return bb_le16toh(val); }
+template<> inline int16_t BinaryBuffer::host_from_le(int16_t val) { return bb_le16toh(val); }
+template<> inline uint32_t BinaryBuffer::host_from_le(uint32_t val) { return bb_le32toh(val); }
+template<> inline int32_t BinaryBuffer::host_from_le(int32_t val) { return bb_le32toh(val); }
 
 #endif /* __BINARY_BUFFER_H__ */

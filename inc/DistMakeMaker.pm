@@ -50,6 +50,28 @@ ENDCODE
         ]
     );
 
+    my $test_original_endian_macros = <<"ENDCODE";
+#include "binarybuffer-config.h"
+#if defined(HAS_ENDIAN_H)
+    #include <endian.h>
+#elif defined(HAS_SYS_ENDIAN_H)
+    #include <sys/endian.h>
+#endif
+int main() {
+    int val = betoh32(htobe32(0x11223344));
+    return 0;
+}
+ENDCODE
+    $c->try_build(
+        on_error => sub { },
+        try => [
+            {
+                code => $test_original_endian_macros,
+                defs => { HAS_ORIGINAL_ENDIAN_MACROS => 1 },
+            }
+        ]
+    );
+
     $c->generate_config_file;
 
     %args = $c->makemaker_args;

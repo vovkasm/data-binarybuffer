@@ -2,6 +2,7 @@ package inc::CConf;
 use strict;
 use warnings;
 use ExtUtils::CBuilder;
+use File::Spec ();
 use File::Temp ();
 
 sub new {
@@ -104,7 +105,7 @@ sub try_build {
         my $code = $args{code} || $try_args->{code};
         die "try_build: code argument required" unless $code;
         
-        my $fh = File::Temp->new(SUFFIX => '.c'); # same as file created from .xs
+        my $fh = File::Temp->new(DIR => File::Spec->curdir, SUFFIX => '.c'); # same as file created from .xs
         $fh->print($code);
 
         my %compile_args = $self->cbuilder_compile_args(source => $fh->filename, %$try_args);
@@ -112,9 +113,18 @@ sub try_build {
         next unless $obj;
         my %link_args = $self->cbuilder_linker_args(objects => $obj, %$try_args);
         my $exe = eval { $self->{cbuilder}->link_executable(%link_args); };
-        next unless $exe;
-        next unless system($exe) == 0;
+        unless ($exe) {
+            unlink $obj;
+            next;
+        }
+        unless (system($exe) == 0) {
+            unlink $obj;
+            unlink $exe;
+            next;
+        }
 
+        unlink $obj;
+        unlink $exe;
         $self->merge_args(%$try_args);
         return 1;
     }
