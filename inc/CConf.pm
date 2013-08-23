@@ -2,6 +2,7 @@ package inc::CConf;
 use strict;
 use warnings;
 use ExtUtils::CBuilder;
+use File::Spec ();
 
 sub new {
     my $class = shift;
@@ -97,38 +98,41 @@ sub try_build {
     my $on_error = $args{on_error};
     my $try_list = $args{try} || [{}];
 
+    my $test_file = "cconftest.c";
+
     foreach my $try_args (@$try_list) {
         $self->generate_config_file(%$try_args);
 
         my $code = $args{code} || $try_args->{code};
         die "try_build: code argument required" unless $code;
 
-        open my $fh, ">", "test.c" or die("Can't write test.c: $!");
+        open my $fh, ">", $test_file or die("Can't write $test_file: $!");
         print $fh $code;
         close $fh;
         
-        my %compile_args = $self->cbuilder_compile_args(source => "test.c", %$try_args);
+        my %compile_args = $self->cbuilder_compile_args(source => $test_file, %$try_args);
         my $obj = eval { $self->{cbuilder}->compile(%compile_args) };
         unless ($obj) {
-            unlink "test.c";
+            unlink $test_file;
             next;
         }
 
         my %link_args = $self->cbuilder_linker_args(objects => $obj, %$try_args);
         my $exe = eval { $self->{cbuilder}->link_executable(%link_args); };
         unless ($exe) {
-            unlink "test.c";
+            unlink $test_file;
             unlink $obj;
             next;
         }
-        unless (system($exe) == 0) {
-            unlink "test.c";
+        my $exe_path = File::Spec->catfile(File::Spec->curdir, $exe);
+        unless (system($exe_path) == 0) {
+            unlink $test_file;
             unlink $obj;
             unlink $exe;
             next;
         }
 
-        unlink "test.c";
+        unlink $test_file;
         unlink $obj;
         unlink $exe;
         $self->merge_args(%$try_args);
