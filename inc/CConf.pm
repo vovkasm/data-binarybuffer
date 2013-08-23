@@ -163,7 +163,7 @@ ENDCODE
         try => [
             {ccflags=>['-xc++'],libs=>['stdc++']},
             {ccflags=>['-xc++'],libs=>['c++']},
-            {ccflags=>['-TP'],ldflags=>['msvcprt.lib']}
+            {ccflags=>['-TP','-EHsc'],ldflags=>['msvcprt.lib']}
         ],
         code => $code
     );
