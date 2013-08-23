@@ -151,8 +151,9 @@ ENDCODE
     $self->try_build(
         on_error => sub { die "Can't build C++ program on this platform" },
         try => [
-            {ccflags=>['-xc++']},
-            {ccflags=>['-TP']}
+            {ccflags=>['-xc++'],libs=>['stdc++']},
+            {ccflags=>['-xc++'],libs=>['c++']},
+            {ccflags=>['-TP'],libs=>['msvcprt.lib']}
         ],
         code => $code
     );
@@ -173,10 +174,6 @@ ENDCODE
 
     $self->try_build(
         on_error => sub { die "Can't build C++ program with STL on this platform" },
-        try => [
-            {libs=>['stdc++']},
-            {libs=>['c++']}
-        ],
         code => $code
     );
 }

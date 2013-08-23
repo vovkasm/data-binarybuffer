@@ -8,7 +8,7 @@ Data::BinaryBuffer - The module to work with binary data effectively
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 SYNOPSIS
 
