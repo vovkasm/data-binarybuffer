@@ -1,5 +1,6 @@
 {{$NEXT}}
   * Fix configure tests for C++ and STL
+  * Improve platform tests
 
 0.004     2013-08-22 04:29:30 Europe/Moscow
   * Fix CCFLAGS leak from build environment
