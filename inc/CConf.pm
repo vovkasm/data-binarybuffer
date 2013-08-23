@@ -2,8 +2,6 @@ package inc::CConf;
 use strict;
 use warnings;
 use ExtUtils::CBuilder;
-use File::Spec ();
-use File::Temp ();
 
 sub new {
     my $class = shift;
@@ -104,25 +102,33 @@ sub try_build {
 
         my $code = $args{code} || $try_args->{code};
         die "try_build: code argument required" unless $code;
-        
-        my $fh = File::Temp->new(DIR => File::Spec->curdir, SUFFIX => '.c'); # same as file created from .xs
-        $fh->print($code);
 
-        my %compile_args = $self->cbuilder_compile_args(source => $fh->filename, %$try_args);
+        open my $fh, ">", "test.c" or die("Can't write test.c: $!");
+        print $fh $code;
+        close $fh;
+        
+        my %compile_args = $self->cbuilder_compile_args(source => "test.c", %$try_args);
         my $obj = eval { $self->{cbuilder}->compile(%compile_args) };
-        next unless $obj;
+        unless ($obj) {
+            unlink "test.c";
+            next;
+        }
+
         my %link_args = $self->cbuilder_linker_args(objects => $obj, %$try_args);
         my $exe = eval { $self->{cbuilder}->link_executable(%link_args); };
         unless ($exe) {
+            unlink "test.c";
             unlink $obj;
             next;
         }
         unless (system($exe) == 0) {
+            unlink "test.c";
             unlink $obj;
             unlink $exe;
             next;
         }
 
+        unlink "test.c";
         unlink $obj;
         unlink $exe;
         $self->merge_args(%$try_args);
@@ -153,7 +159,7 @@ ENDCODE
         try => [
             {ccflags=>['-xc++'],libs=>['stdc++']},
             {ccflags=>['-xc++'],libs=>['c++']},
-            {ccflags=>['-TP'],libs=>['msvcprt.lib']}
+            {ccflags=>['-TP'],ldflags=>['msvcprt.lib']}
         ],
         code => $code
     );
