@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.005     2013-08-24 03:25:01 Europe/Moscow
   * Fix configure tests for C++ and STL
   * Improve platform tests
 
