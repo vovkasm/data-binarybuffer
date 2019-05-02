@@ -4,7 +4,7 @@ use warnings;
 
 # ABSTRACT: The module to work with binary data effectively
 
-our $VERSION = '0.006';
+our $VERSION = '0.007';
 
 require XSLoader;
 XSLoader::load('Data::BinaryBuffer', $VERSION);
