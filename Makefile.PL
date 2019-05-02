@@ -1,0 +1,79 @@
+# inc::DistMakeMaker <self>
+# and Dist::Zilla::Plugin::MakeMaker::Awesome 0.48.
+# Don't edit it but the dist.ini and plugins used to construct it.
+
+use strict;
+use warnings;
+
+use 5.006;
+use ExtUtils::MakeMaker;
+
+my %WriteMakefileArgs = (
+  "ABSTRACT" => "The module to work with binary data effectively",
+  "AUTHOR" => "Vladimir Timofeev <vovkasm\@gmail.com>",
+  "CONFIGURE_REQUIRES" => {
+    "ExtUtils::CBuilder" => 0,
+    "ExtUtils::MakeMaker" => 0,
+    "File::Spec" => 0
+  },
+  "DISTNAME" => "Data-BinaryBuffer",
+  "LICENSE" => "perl",
+  "MIN_PERL_VERSION" => "5.006",
+  "NAME" => "Data::BinaryBuffer",
+  "PREREQ_PM" => {
+    "XSLoader" => 0,
+    "strict" => 0,
+    "warnings" => 0
+  },
+  "TEST_REQUIRES" => {
+    "ExtUtils::MakeMaker" => 0,
+    "File::Spec" => 0,
+    "Test::More" => 0
+  },
+  "VERSION" => "0.05",
+  "test" => {
+    "TESTS" => "t/*.t"
+  }
+);
+
+my %FallbackPrereqs = (
+  "ExtUtils::MakeMaker" => 0,
+  "File::Spec" => 0,
+  "Test::More" => 0,
+  "XSLoader" => 0,
+  "strict" => 0,
+  "warnings" => 0
+);
+
+unless ( eval { ExtUtils::MakeMaker->VERSION('6.63_03') } ) {
+  delete $WriteMakefileArgs{TEST_REQUIRES};
+  delete $WriteMakefileArgs{BUILD_REQUIRES};
+  $WriteMakefileArgs{PREREQ_PM} = \%FallbackPrereqs;
+}
+
+delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
+  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
+
+use Config ();
+use Text::ParseWords 'shellwords';
+use FindBin;
+use lib $FindBin::Bin;
+use inc::CConf;
+
+$WriteMakefileArgs{CONFIGURE} = sub {
+    my %args;
+
+    my $c = inc::CConf->new();
+
+    $c->add_header_search_path("$FindBin::Bin/databb-boost");
+
+    $c->need_cplusplus;
+
+    %args = $c->makemaker_args;
+
+    $args{TYPEMAPS} = ['perlobject.map'];
+
+    return \%args;
+};
+
+WriteMakefile(%WriteMakefileArgs);
