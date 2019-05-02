@@ -15,6 +15,7 @@ sub new {
 
         config_file => $args{config_file}||'',
         defs => {},
+        header_search_paths => [],
         ccflags => [],
         ldflags => [],
         libs => [],
@@ -34,6 +35,9 @@ sub makemaker_args {
     }
     if (@{$self->{ldflags}}) {
         $args{dynamic_lib}{OTHERLDFLAGS} = join(' ',@{$self->{ldflags}});
+    }
+    if (@{$self->{header_search_paths}}) {
+        $args{INC} = join(' ',map { "-I$_" } @{$self->{header_search_paths}});
     }
     return (%args);
 }
@@ -186,6 +190,13 @@ ENDCODE
         on_error => sub { die "Can't build C++ program with STL on this platform" },
         code => $code
     );
+}
+
+sub add_header_search_path {
+    my $self = shift;
+    my $path = shift;
+
+    push @{$self->{header_search_paths}}, $path;
 }
 
 1;
