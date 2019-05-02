@@ -24,12 +24,11 @@ use inc::CConf;
 $WriteMakefileArgs{CONFIGURE} = sub {
     my %args;
 
-    my $c = inc::CConf->new(config_file=>'binarybuffer-config.h');
+    my $c = inc::CConf->new();
 
     $c->add_header_search_path("$FindBin::Bin/databb-boost");
 
     $c->need_cplusplus;
-    $c->need_stl;
 
     %args = $c->makemaker_args;
 

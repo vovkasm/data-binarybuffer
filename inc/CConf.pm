@@ -13,7 +13,6 @@ sub new {
     my $self = bless {
         cbuilder => $cbuilder,
 
-        config_file => $args{config_file}||'',
         defs => {},
         header_search_paths => [],
         ccflags => [],
@@ -72,29 +71,6 @@ sub cbuilder_linker_args {
     );
 }
 
-sub generate_config_file {
-    my $self = shift;
-    return unless $self->{config_file};
-    my %args = @_;
-
-    open my $fh, '>', $self->{config_file} or die "Can't write config file '$self->{config_file}': $!";
-    print $fh "/* DO NOT EDIT! This file generated automatically and will be rewritten. */\n";
-
-    my %defs = %{$self->{defs}};
-    if ($args{defs}) {
-        $defs{$_} = $args{defs}{$_} foreach keys %{$args{defs}};
-    }
-    foreach my $def (sort keys %defs) {
-        if (defined $defs{$def}) {
-            print $fh "#define $def $defs{$def}\n";
-        }
-        else {
-            print $fh "#undef $def\n";
-        }
-    }
-    close $fh;
-}
-
 sub try_build {
     my $self = shift;
     my %args = @_;
@@ -105,8 +81,6 @@ sub try_build {
     my $test_file = "cconftest.c";
 
     foreach my $try_args (@$try_list) {
-        $self->generate_config_file(%$try_args);
-
         my $code = $args{code} || $try_args->{code};
         die "try_build: code argument required" unless $code;
 
@@ -151,33 +125,12 @@ sub need_cplusplus {
     my $self = shift;
 
     my $code = <<'ENDCODE';
+#include <vector>
+
 class SomeClass {
 public:
     int test() { return 0; }
 };
-
-int main() {
-    SomeClass c;
-    return c.test();
-}
-ENDCODE
-
-    $self->try_build(
-        on_error => sub { die "Can't build C++ program on this platform" },
-        try => [
-            {ccflags=>['-xc++'],libs=>['stdc++']},
-            {ccflags=>['-xc++'],libs=>['c++']},
-            {ccflags=>['-TP','-EHsc'],ldflags=>['msvcprt.lib']}
-        ],
-        code => $code
-    );
-}
-
-sub need_stl {
-    my $self = shift;
-
-    my $code = <<'ENDCODE';
-#include <vector>
 
 int main() {
     std::vector<int> c(10);
@@ -187,7 +140,12 @@ int main() {
 ENDCODE
 
     $self->try_build(
-        on_error => sub { die "Can't build C++ program with STL on this platform" },
+        on_error => sub { die "Can't build C++ program on this platform" },
+        try => [
+            {ccflags=>['-xc++'],ldflags=>['-lc++']},
+            {ccflags=>['-xc++'],ldflags=>['-lstdc++']},
+            {ccflags=>['-TP','-EHsc'],ldflags=>['msvcprt.lib']}
+        ],
         code => $code
     );
 }
